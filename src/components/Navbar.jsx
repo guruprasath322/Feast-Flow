@@ -33,11 +33,17 @@ export default function Navbar() {
         <div className="nav-actions">
           <button 
             onClick={toggleTheme} 
-            className="icon-btn" 
-            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            className={`icon-btn theme-toggle-btn ${darkMode ? 'dark' : 'light'}`} 
+            title={darkMode ? "Switch to Light Mode (☀️)" : "Switch to Dark Mode (🌙)"}
             aria-label="Toggle Theme"
           >
-            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+            <div className="theme-icon-container">
+              {darkMode ? (
+                <Sun size={20} className="theme-icon sun-icon" />
+              ) : (
+                <Moon size={20} className="theme-icon moon-icon" />
+              )}
+            </div>
           </button>
 
           <Link to="/cart" className="icon-btn cart-icon-wrapper" aria-label="Shopping Cart">
