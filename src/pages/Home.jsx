@@ -1,17 +1,49 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Flame, ShieldCheck, Heart } from 'lucide-react';
+import { Search, Flame, ShieldCheck, X, SlidersHorizontal, Sparkles, Star, Clock, Filter } from 'lucide-react';
 import { foodData } from '../data/foodData';
 import FoodCard from '../components/FoodCard';
 
-const CATEGORIES = ["All", "Burger", "Pizza", "Sushi", "Desserts", "Healthy", "Tacos", "Ramen", "Steak"];
+const CATEGORIES = [
+  { name: "All", icon: "🍽️" },
+  { name: "Burger", icon: "🍔" },
+  { name: "Pizza", icon: "🍕" },
+  { name: "Sushi", icon: "🍣" },
+  { name: "Pasta", icon: "🍝" },
+  { name: "Desserts", icon: "🍰" },
+  { name: "Healthy", icon: "🥗" },
+  { name: "Tacos", icon: "🌮" },
+  { name: "Ramen", icon: "🍜" },
+  { name: "Steak", icon: "🥩" },
+];
+
+const QUICK_TAGS = [
+  { label: "🔥 Popular", query: "popular" },
+  { label: "🍕 Truffle Pizza", query: "Truffle" },
+  { label: "🍔 Cheeseburger", query: "Burger" },
+  { label: "🍣 Sushi Platter", query: "Sushi" },
+  { label: "🥗 Healthy Bowls", query: "Healthy" },
+  { label: "🍰 Lava Cake", query: "Cake" },
+];
 
 export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('popular');
+  const [popularOnly, setPopularOnly] = useState(false);
+  const [underFifteen, setUnderFifteen] = useState(false);
+  const [topRatedOnly, setTopRatedOnly] = useState(false);
 
   const selectedCategory = searchParams.get('category') || 'All';
+
+  // Calculate dynamic dish count for each category
+  const categoryCounts = useMemo(() => {
+    const counts = { All: foodData.length };
+    foodData.forEach(item => {
+      counts[item.category] = (counts[item.category] || 0) + 1;
+    });
+    return counts;
+  }, []);
 
   // Synchronize URL category query param with tabs
   const handleCategorySelect = (category) => {
@@ -22,6 +54,28 @@ export default function Home() {
     }
     setSearchParams(searchParams);
   };
+
+  // Quick tag click handler
+  const handleQuickTagClick = (tagQuery) => {
+    if (tagQuery === 'popular') {
+      setPopularOnly(prev => !prev);
+    } else {
+      setSearchQuery(tagQuery);
+    }
+  };
+
+  // Reset all search and filter controls
+  const handleResetFilters = () => {
+    setSearchQuery('');
+    handleCategorySelect('All');
+    setSortBy('popular');
+    setPopularOnly(false);
+    setUnderFifteen(false);
+    setTopRatedOnly(false);
+  };
+
+  // Check if any filter is active
+  const hasActiveFilters = searchQuery.trim() !== '' || selectedCategory !== 'All' || popularOnly || underFifteen || topRatedOnly || sortBy !== 'popular';
 
   // Filter and Sort Data
   const filteredAndSortedFood = useMemo(() => {
@@ -38,8 +92,22 @@ export default function Home() {
       result = result.filter(item => 
         item.name.toLowerCase().includes(query) ||
         item.description.toLowerCase().includes(query) ||
+        item.category.toLowerCase().includes(query) ||
         item.ingredients.some(ing => ing.toLowerCase().includes(query))
       );
+    }
+
+    // Secondary Quick Filters
+    if (popularOnly) {
+      result = result.filter(item => item.popular);
+    }
+
+    if (underFifteen) {
+      result = result.filter(item => item.price < 15.00);
+    }
+
+    if (topRatedOnly) {
+      result = result.filter(item => item.rating >= 4.8);
     }
 
     // Sorting Logic
@@ -49,8 +117,14 @@ export default function Home() {
       result.sort((a, b) => b.price - a.price);
     } else if (sortBy === 'rating') {
       result.sort((a, b) => b.rating - a.rating);
+    } else if (sortBy === 'prep-fast') {
+      result.sort((a, b) => {
+        const timeA = parseInt(a.prepTime) || 99;
+        const timeB = parseInt(b.prepTime) || 99;
+        return timeA - timeB;
+      });
     } else {
-      // Sort by popularity (popular item first, then highest rating)
+      // Popularity default sort
       result.sort((a, b) => {
         if (a.popular && !b.popular) return -1;
         if (!a.popular && b.popular) return 1;
@@ -59,7 +133,7 @@ export default function Home() {
     }
 
     return result;
-  }, [selectedCategory, searchQuery, sortBy]);
+  }, [selectedCategory, searchQuery, sortBy, popularOnly, underFifteen, topRatedOnly]);
 
   return (
     <div className="container anim-fade-in">
@@ -71,17 +145,46 @@ export default function Home() {
             Experience chef-crafted premium delicacies cooked with organic ingredients and delivered hot, fresh, and exceptionally fast.
           </p>
 
+          {/* Interactive Live Search Container */}
           <div className="search-container">
             <div className="search-input-wrapper">
-              <Search size={20} />
+              <Search size={20} className="search-icon" />
               <input 
                 type="text" 
-                placeholder="Craving something? Search here..." 
+                placeholder="Craving pizza, burgers, sushi...?" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
+              {searchQuery && (
+                <button 
+                  className="search-clear-btn"
+                  onClick={() => setSearchQuery('')}
+                  title="Clear search"
+                  aria-label="Clear search text"
+                >
+                  <X size={16} />
+                </button>
+              )}
             </div>
-            <button className="search-btn">Search</button>
+            <button className="search-btn">
+              <span>Search</span>
+            </button>
+          </div>
+
+          {/* Quick Search Tag Pills */}
+          <div className="quick-tags">
+            <span className="quick-tags-title">Try searching:</span>
+            <div className="tags-wrapper">
+              {QUICK_TAGS.map(tag => (
+                <button
+                  key={tag.label}
+                  onClick={() => handleQuickTagClick(tag.query)}
+                  className={`tag-pill ${searchQuery === tag.query || (tag.query === 'popular' && popularOnly) ? 'active' : ''}`}
+                >
+                  {tag.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -122,32 +225,76 @@ export default function Home() {
             <span className="card-category" style={{ display: 'block', marginBottom: '8px' }}>Our Specialties</span>
             <h2>Browse Our Exquisite Menu</h2>
           </div>
-          <div>
-            <select 
-              value={sortBy} 
-              onChange={(e) => setSortBy(e.target.value)} 
-              className="sort-select"
-              aria-label="Sort food list"
-            >
-              <option value="popular">Popularity</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="rating">Highest Rated</option>
-            </select>
+
+          <div className="catalog-controls-top">
+            {/* Sort Select */}
+            <div className="sort-wrapper">
+              <SlidersHorizontal size={16} className="sort-icon" />
+              <select 
+                value={sortBy} 
+                onChange={(e) => setSortBy(e.target.value)} 
+                className="sort-select"
+                aria-label="Sort food list"
+              >
+                <option value="popular">Popularity</option>
+                <option value="rating">Highest Rated ⭐</option>
+                <option value="price-low">Price: Low to High 💰</option>
+                <option value="price-high">Price: High to Low 💎</option>
+                <option value="prep-fast">Fastest Prep ⚡</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        {/* Categories Tab Bar */}
+        {/* Categories Tab Bar with Icons and Counts */}
         <div className="categories-container">
-          {CATEGORIES.map(category => (
-            <button
-              key={category}
-              onClick={() => handleCategorySelect(category)}
-              className={`category-tab ${selectedCategory === category ? 'active' : ''}`}
+          {CATEGORIES.map(cat => {
+            const count = categoryCounts[cat.name] || 0;
+            return (
+              <button
+                key={cat.name}
+                onClick={() => handleCategorySelect(cat.name)}
+                className={`category-tab ${selectedCategory === cat.name ? 'active' : ''}`}
+              >
+                <span className="cat-icon">{cat.icon}</span>
+                <span className="cat-name">{cat.name}</span>
+                <span className="cat-count">{count}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Secondary Quick Filter Pills */}
+        <div className="secondary-filters-bar">
+          <div className="filter-pills-group">
+            <button 
+              className={`filter-pill ${popularOnly ? 'active' : ''}`}
+              onClick={() => setPopularOnly(prev => !prev)}
             >
-              {category}
+              <Flame size={14} /> Popular Dishes
             </button>
-          ))}
+            <button 
+              className={`filter-pill ${underFifteen ? 'active' : ''}`}
+              onClick={() => setUnderFifteen(prev => !prev)}
+            >
+              <Sparkles size={14} /> Under $15
+            </button>
+            <button 
+              className={`filter-pill ${topRatedOnly ? 'active' : ''}`}
+              onClick={() => setTopRatedOnly(prev => !prev)}
+            >
+              <Star size={14} /> 4.8+ Rating
+            </button>
+          </div>
+
+          <div className="results-status">
+            <span>Showing <strong>{filteredAndSortedFood.length}</strong> delicacies</span>
+            {hasActiveFilters && (
+              <button onClick={handleResetFilters} className="reset-link-btn">
+                Clear Filters
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Food Grid Display */}
@@ -163,12 +310,12 @@ export default function Home() {
               <Search size={40} />
             </div>
             <h3>No Delicacies Found</h3>
-            <p>We couldn't find anything matching your search. Please adjust your keywords or category filter.</p>
+            <p>We couldn't find anything matching your filters or search terms. Try adjusting your query or category selection.</p>
             <button 
-              onClick={() => { setSearchQuery(''); handleCategorySelect('All'); }} 
+              onClick={handleResetFilters} 
               className="btn-primary"
             >
-              Reset Filters
+              Reset All Filters
             </button>
           </div>
         )}
@@ -176,3 +323,4 @@ export default function Home() {
     </div>
   );
 }
+
