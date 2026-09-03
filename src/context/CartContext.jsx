@@ -1,14 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 const CartContext = createContext();
-
-export const useCart = () => {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
-  }
-  return context;
-};
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState(() => {
@@ -19,6 +11,11 @@ export const CartProvider = ({ children }) => {
   const [orders, setOrders] = useState(() => {
     const savedOrders = localStorage.getItem('food_orders');
     return savedOrders ? JSON.parse(savedOrders) : [];
+  });
+
+  const [favorites, setFavorites] = useState(() => {
+    const savedFavorites = localStorage.getItem('food_favorites');
+    return savedFavorites ? JSON.parse(savedFavorites) : [];
   });
 
   const [darkMode, setDarkMode] = useState(() => {
@@ -37,6 +34,10 @@ export const CartProvider = ({ children }) => {
   }, [orders]);
 
   useEffect(() => {
+    localStorage.setItem('food_favorites', JSON.stringify(favorites));
+  }, [favorites]);
+
+  useEffect(() => {
     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
     if (darkMode) {
       document.documentElement.classList.add('dark-theme');
@@ -47,6 +48,20 @@ export const CartProvider = ({ children }) => {
 
   const toggleTheme = () => {
     setDarkMode(prev => !prev);
+  };
+
+  const toggleFavorite = (product) => {
+    setFavorites(prev => {
+      const exists = prev.some(item => item.id === product.id);
+      if (exists) {
+        return prev.filter(item => item.id !== product.id);
+      }
+      return [...prev, product];
+    });
+  };
+
+  const isFavorite = (productId) => {
+    return favorites.some(item => item.id === productId);
   };
 
   const addToCart = (product, quantity = 1) => {
@@ -147,9 +162,12 @@ export const CartProvider = ({ children }) => {
       value={{
         cart,
         orders,
+        favorites,
         darkMode,
         appliedPromo,
         toggleTheme,
+        toggleFavorite,
+        isFavorite,
         addToCart,
         removeFromCart,
         updateQuantity,
@@ -168,3 +186,13 @@ export const CartProvider = ({ children }) => {
     </CartContext.Provider>
   );
 };
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error('useCart must be used within a CartProvider');
+  }
+  return context;
+};
+

@@ -1,4 +1,3 @@
-import React from 'react';
 import { ChefHat, Mail, Phone, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

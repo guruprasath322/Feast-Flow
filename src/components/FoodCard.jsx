@@ -1,15 +1,21 @@
-import React from 'react';
-import { Star, Clock, ShoppingCart } from 'lucide-react';
+import { Star, Clock, ShoppingCart, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 export default function FoodCard({ food }) {
-  const { addToCart } = useCart();
+  const { addToCart, toggleFavorite, isFavorite } = useCart();
   const { id, name, price, rating, prepTime, category, description, image, popular } = food;
+  const favorite = isFavorite(id);
 
   const handleAddToCart = (e) => {
     e.preventDefault(); // prevent routing to detail page when clicking add to cart
     addToCart(food, 1);
+  };
+
+  const handleToggleFav = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFavorite(food);
   };
 
   return (
@@ -17,6 +23,14 @@ export default function FoodCard({ food }) {
       <div className="card-img-wrapper">
         <img src={image} alt={name} loading="lazy" />
         {popular && <div className="card-badge-popular">Popular</div>}
+        <button 
+          onClick={handleToggleFav}
+          className={`card-fav-btn ${favorite ? 'active' : ''}`}
+          title={favorite ? "Remove from favorites" : "Add to favorites"}
+          aria-label={favorite ? `Remove ${name} from favorites` : `Add ${name} to favorites`}
+        >
+          <Heart size={16} fill={favorite ? "var(--primary)" : "none"} color={favorite ? "var(--primary)" : "#ffffff"} />
+        </button>
       </div>
 
       <div className="card-content">
@@ -55,3 +69,4 @@ export default function FoodCard({ food }) {
     </Link>
   );
 }
+

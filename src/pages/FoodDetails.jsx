@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Star, Clock, Flame, Minus, Plus, ShoppingCart, MessageSquare, ThumbsUp, CheckCircle, Send } from 'lucide-react';
+import { ArrowLeft, Star, Clock, Flame, Minus, Plus, ShoppingCart, MessageSquare, ThumbsUp, CheckCircle, Send, Heart } from 'lucide-react';
 import { foodData } from '../data/foodData';
 import { useCart } from '../context/CartContext';
 import FoodCard from '../components/FoodCard';
@@ -35,9 +35,8 @@ const INITIAL_REVIEWS = [
   }
 ];
 
-export default function FoodDetails() {
-  const { id } = useParams();
-  const { addToCart } = useCart();
+function FoodDetailContent({ food }) {
+  const { addToCart, toggleFavorite, isFavorite } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [addedFeedback, setAddedFeedback] = useState(false);
   const [reviews, setReviews] = useState(INITIAL_REVIEWS);
@@ -47,31 +46,8 @@ export default function FoodDetails() {
   const [reviewComment, setReviewComment] = useState('');
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
-  // Find current food item
-  const food = foodData.find(item => item.id === parseInt(id));
-
-  // Reset quantity and review form state when viewing a new item
-  useEffect(() => {
-    setQuantity(1);
-    setAddedFeedback(false);
-    setShowReviewForm(false);
-    setReviewSubmitted(false);
-    window.scrollTo(0, 0);
-  }, [id]);
-
-  if (!food) {
-    return (
-      <div className="container spinner-wrapper">
-        <h2>Dish Not Found</h2>
-        <p>The culinary delight you are looking for does not exist or has been removed.</p>
-        <Link to="/" className="btn-primary">
-          <ArrowLeft size={18} /> Back to Menu
-        </Link>
-      </div>
-    );
-  }
-
-  const { name, price, rating, prepTime, category, description, ingredients, image, calories } = food;
+  const { id, name, price, rating, prepTime, category, description, ingredients, image, calories } = food;
+  const favorite = isFavorite(id);
 
   const handleIncrement = () => setQuantity(prev => prev + 1);
   const handleDecrement = () => setQuantity(prev => prev > 1 ? prev - 1 : 1);
@@ -115,9 +91,19 @@ export default function FoodDetails() {
 
   return (
     <div className="container anim-fade-in">
-      <Link to="/" className="details-back-link">
-        <ArrowLeft size={16} /> Back to Menu
-      </Link>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <Link to="/" className="details-back-link" style={{ marginBottom: 0 }}>
+          <ArrowLeft size={16} /> Back to Menu
+        </Link>
+        <button
+          onClick={() => toggleFavorite(food)}
+          className={`details-fav-btn ${favorite ? 'active' : ''}`}
+          title={favorite ? "Saved in Favorites" : "Add to Favorites"}
+        >
+          <Heart size={18} fill={favorite ? "var(--primary)" : "none"} color={favorite ? "var(--primary)" : "currentColor"} />
+          <span>{favorite ? "In Favorites" : "Add to Favorites"}</span>
+        </button>
+      </div>
 
       <div className="details-wrapper">
         {/* Left column: Image */}
@@ -324,4 +310,29 @@ export default function FoodDetails() {
     </div>
   );
 }
+
+export default function FoodDetails() {
+  const { id } = useParams();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
+  const food = foodData.find(item => item.id === parseInt(id));
+
+  if (!food) {
+    return (
+      <div className="container spinner-wrapper">
+        <h2>Dish Not Found</h2>
+        <p>The culinary delight you are looking for does not exist or has been removed.</p>
+        <Link to="/" className="btn-primary">
+          <ArrowLeft size={18} /> Back to Menu
+        </Link>
+      </div>
+    );
+  }
+
+  return <FoodDetailContent key={food.id} food={food} />;
+}
+
 

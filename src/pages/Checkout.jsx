@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { CreditCard, Truck, Wallet, ShieldCheck, ArrowLeft, Loader2 } from 'lucide-react';
+import { CreditCard, Truck, Wallet, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 export default function Checkout() {

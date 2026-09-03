@@ -1,11 +1,11 @@
-import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { ShoppingBag, Sun, Moon, ChefHat, ClipboardList } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 export default function Navbar() {
-  const { getCartCount, darkMode, toggleTheme } = useCart();
+  const { getCartCount, orders, darkMode, toggleTheme } = useCart();
   const cartCount = getCartCount();
+  const ordersCount = orders ? orders.length : 0;
 
   return (
     <nav className="navbar">
@@ -21,6 +21,12 @@ export default function Navbar() {
             className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
           >
             Menu
+          </NavLink>
+          <NavLink 
+            to="/orders" 
+            className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+          >
+            Orders
           </NavLink>
           <NavLink 
             to="/cart" 
@@ -46,7 +52,14 @@ export default function Navbar() {
             </div>
           </button>
 
-          <Link to="/cart" className="icon-btn cart-icon-wrapper" aria-label="Shopping Cart">
+          <Link to="/orders" className="icon-btn orders-icon-wrapper" aria-label="Order History" title="View Order History">
+            <ClipboardList size={20} />
+            {ordersCount > 0 && (
+              <span className="cart-badge orders-badge">{ordersCount}</span>
+            )}
+          </Link>
+
+          <Link to="/cart" className="icon-btn cart-icon-wrapper" aria-label="Shopping Cart" title="View Cart">
             <ShoppingBag size={20} />
             {cartCount > 0 && (
               <span className="cart-badge">{cartCount}</span>
@@ -57,3 +70,4 @@ export default function Navbar() {
     </nav>
   );
 }
+

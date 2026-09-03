@@ -1,13 +1,28 @@
 {
-  "name": "untitled-folder",
+  "name": "feast-flow",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Super fast gourmet food delivery web application built with React and Vite.",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
+  },
+  "keywords": [
+    "react",
+    "vite",
+    "food-delivery",
+    "gourmet",
+    "ecommerce",
+    "dark-mode",
+    "restaurant-app"
+  ],
+  "author": "Guruprasath",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/guruprasath716/Feast-Flow.git"
   },
   "dependencies": {
     "lucide-react": "^1.21.0",
@@ -27,3 +42,4 @@
     "vite": "^8.1.0"
   }
 }
+

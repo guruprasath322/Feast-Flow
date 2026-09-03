@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Flame, ShieldCheck, X, SlidersHorizontal, Sparkles, Star, Clock, Filter } from 'lucide-react';
+import { Search, Flame, ShieldCheck, X, SlidersHorizontal, Sparkles, Star, Heart } from 'lucide-react';
 import { foodData } from '../data/foodData';
+import { useCart } from '../context/CartContext';
 import FoodCard from '../components/FoodCard';
 
 const CATEGORIES = [
@@ -19,6 +20,7 @@ const CATEGORIES = [
 
 const QUICK_TAGS = [
   { label: "🔥 Popular", query: "popular" },
+  { label: "❤️ Favorites", query: "favorites" },
   { label: "🍕 Truffle Pizza", query: "Truffle" },
   { label: "🍔 Cheeseburger", query: "Burger" },
   { label: "🍣 Sushi Platter", query: "Sushi" },
@@ -27,10 +29,12 @@ const QUICK_TAGS = [
 ];
 
 export default function Home() {
+  const { isFavorite, favorites } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('popular');
   const [popularOnly, setPopularOnly] = useState(false);
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [underFifteen, setUnderFifteen] = useState(false);
   const [topRatedOnly, setTopRatedOnly] = useState(false);
 
@@ -59,6 +63,8 @@ export default function Home() {
   const handleQuickTagClick = (tagQuery) => {
     if (tagQuery === 'popular') {
       setPopularOnly(prev => !prev);
+    } else if (tagQuery === 'favorites') {
+      setFavoritesOnly(prev => !prev);
     } else {
       setSearchQuery(tagQuery);
     }
@@ -70,12 +76,13 @@ export default function Home() {
     handleCategorySelect('All');
     setSortBy('popular');
     setPopularOnly(false);
+    setFavoritesOnly(false);
     setUnderFifteen(false);
     setTopRatedOnly(false);
   };
 
   // Check if any filter is active
-  const hasActiveFilters = searchQuery.trim() !== '' || selectedCategory !== 'All' || popularOnly || underFifteen || topRatedOnly || sortBy !== 'popular';
+  const hasActiveFilters = searchQuery.trim() !== '' || selectedCategory !== 'All' || popularOnly || favoritesOnly || underFifteen || topRatedOnly || sortBy !== 'popular';
 
   // Filter and Sort Data
   const filteredAndSortedFood = useMemo(() => {
@@ -100,6 +107,10 @@ export default function Home() {
     // Secondary Quick Filters
     if (popularOnly) {
       result = result.filter(item => item.popular);
+    }
+
+    if (favoritesOnly) {
+      result = result.filter(item => isFavorite(item.id));
     }
 
     if (underFifteen) {
@@ -133,7 +144,7 @@ export default function Home() {
     }
 
     return result;
-  }, [selectedCategory, searchQuery, sortBy, popularOnly, underFifteen, topRatedOnly]);
+  }, [selectedCategory, searchQuery, sortBy, popularOnly, favoritesOnly, underFifteen, topRatedOnly, isFavorite]);
 
   return (
     <div className="container anim-fade-in">
@@ -179,7 +190,7 @@ export default function Home() {
                 <button
                   key={tag.label}
                   onClick={() => handleQuickTagClick(tag.query)}
-                  className={`tag-pill ${searchQuery === tag.query || (tag.query === 'popular' && popularOnly) ? 'active' : ''}`}
+                  className={`tag-pill ${searchQuery === tag.query || (tag.query === 'popular' && popularOnly) || (tag.query === 'favorites' && favoritesOnly) ? 'active' : ''}`}
                 >
                   {tag.label}
                 </button>
@@ -274,6 +285,12 @@ export default function Home() {
               <Flame size={14} /> Popular Dishes
             </button>
             <button 
+              className={`filter-pill ${favoritesOnly ? 'active' : ''}`}
+              onClick={() => setFavoritesOnly(prev => !prev)}
+            >
+              <Heart size={14} fill={favoritesOnly ? "var(--primary)" : "none"} /> Favorites ({favorites.length})
+            </button>
+            <button 
               className={`filter-pill ${underFifteen ? 'active' : ''}`}
               onClick={() => setUnderFifteen(prev => !prev)}
             >
@@ -323,4 +340,5 @@ export default function Home() {
     </div>
   );
 }
+
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
@@ -10,6 +9,7 @@ import FoodDetails from './pages/FoodDetails';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
+import Orders from './pages/Orders';
 
 // Styles
 import './App.css';
@@ -24,6 +24,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/food/:id" element={<FoodDetails />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/orders" element={<Orders />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
           </Routes>
@@ -35,3 +36,4 @@ function App() {
 }
 
 export default App;
+

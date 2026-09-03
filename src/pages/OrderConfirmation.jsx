@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Check, Calendar, MapPin, Truck, ChevronRight, Home as HomeIcon } from 'lucide-react';
+import { Check, Calendar, MapPin, ChevronRight, Home as HomeIcon } from 'lucide-react';
 
 export default function OrderConfirmation() {
   const location = useLocation();
