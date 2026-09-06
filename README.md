@@ -86,7 +86,7 @@ Ensure you have **Node.js** (v18 or higher) and **npm** installed.
 
 ### 2. Clone the Repository
 ```bash
-git clone https://github.com/guruprasath716/Feast-Flow.git
+git clone https://github.com/guruprasath-s-b/Feast-Flow.git
 cd Feast-Flow
 ```
 
