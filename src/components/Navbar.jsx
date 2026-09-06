@@ -1,5 +1,5 @@
 import { NavLink, Link } from 'react-router-dom';
-import { ShoppingBag, Sun, Moon, ChefHat, ClipboardList } from 'lucide-react';
+import { ShoppingBag, Sun, Moon, ChefHat, ClipboardList, Navigation } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 export default function Navbar() {
@@ -27,6 +27,14 @@ export default function Navbar() {
             className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
           >
             Orders
+          </NavLink>
+          <NavLink 
+            to="/track" 
+            className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <Navigation size={14} className="pulse-icon-sm" /> Track Live
+            </span>
           </NavLink>
           <NavLink 
             to="/cart" 

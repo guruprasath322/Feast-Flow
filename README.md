@@ -25,7 +25,7 @@
 - ❤️ **Favorites / Wishlist**: Heart dishes and save them locally to your personal favorites list.
 - 🛒 **Dynamic Shopping Cart**: Manage item quantities, subtotal calculations, free delivery thresholds ($40+), and promo discount codes (`FEAST20`).
 - 💳 **Checkout with Multiple Payment Options**: Credit/Debit card, UPI, and Cash on Delivery with form validation.
-- 🚚 **Live Order Tracking Timeline**: Real-time simulated stage updates: `Placed` ➔ `Preparing` ➔ `Out for Delivery` ➔ `Delivered`.
+- 🚚 **Interactive Live Order Tracking**: Real-time vector map route simulation with animated courier radar, live countdown ETA timer, stage-by-stage progression controls, activity log, and driver call/chat modal simulation.
 - 📋 **Order History & Quick Re-Order**: View all past orders with details, address, receipts, and 1-click re-order to cart.
 - ⭐ **Customer Reviews & Rating System**: Read verified reviews, submit your own star ratings and feedback, and upvote helpful reviews.
 - 🌓 **Dark / Light Mode**: Smooth theme toggling with persistent user preference storage in `localStorage`.
@@ -63,7 +63,8 @@ Feast-Flow/
 │   │   ├── FoodDetails.jsx # Detailed dish view with reviews & recommendation engine
 │   │   ├── Cart.jsx        # Cart management, promo coupons, & bill breakdown
 │   │   ├── Checkout.jsx    # Delivery address and payment method selector
-│   │   ├── OrderConfirmation.jsx # Live order tracking & order receipt
+│   │   ├── OrderConfirmation.jsx # Live order confirmation & receipt
+│   │   ├── OrderTracking.jsx     # Interactive live map delivery tracking & driver simulator
 │   │   └── Orders.jsx      # Order history & re-order dashboard
 │   ├── App.css
 │   ├── App.jsx

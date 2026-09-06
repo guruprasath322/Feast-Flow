@@ -10,6 +10,7 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
 import Orders from './pages/Orders';
+import OrderTracking from './pages/OrderTracking';
 
 // Styles
 import './App.css';
@@ -25,6 +26,8 @@ function App() {
             <Route path="/food/:id" element={<FoodDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/orders" element={<Orders />} />
+            <Route path="/track" element={<OrderTracking />} />
+            <Route path="/track/:orderId" element={<OrderTracking />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
           </Routes>

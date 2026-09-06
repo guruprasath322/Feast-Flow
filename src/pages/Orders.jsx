@@ -81,12 +81,12 @@ export default function Orders() {
 
                 <div className="order-actions-group">
                   <Link 
-                    to="/order-confirmation" 
+                    to={`/track/${id}`} 
                     state={{ order }} 
                     className="btn-secondary" 
-                    style={{ padding: '8px 16px', fontSize: '13px' }}
+                    style={{ padding: '8px 16px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}
                   >
-                    View Status Tracker <ArrowRight size={14} />
+                    <Clock size={14} /> Track Live Delivery <ArrowRight size={14} />
                   </Link>
 
                   <button

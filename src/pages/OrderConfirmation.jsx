@@ -130,9 +130,23 @@ export default function OrderConfirmation() {
           </div>
         </div>
 
-        <Link to="/" className="btn-primary" style={{ marginTop: '20px', width: '100%' }}>
-          Order Something Else <ChevronRight size={18} />
-        </Link>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '24px' }}>
+          <Link 
+            to={`/track/${id}`} 
+            state={{ order }} 
+            className="btn-primary" 
+            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+          >
+            Open Interactive Live Tracker <ChevronRight size={18} />
+          </Link>
+          <Link 
+            to="/" 
+            className="btn-secondary" 
+            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+          >
+            Order Something Else <ChevronRight size={18} />
+          </Link>
+        </div>
       </div>
     </div>
   );
