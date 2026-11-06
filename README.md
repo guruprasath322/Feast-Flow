@@ -1,10 +1,6 @@
 # 🍔 FeastFlow - Super Fast Gourmet Food Delivery
 
 <p align="center">
-  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&auto=format&fit=crop&q=80" alt="FeastFlow Banner" width="100%" style="border-radius: 12px; max-height: 380px; object-fit: cover;" />
-</p>
-
-<p align="center">
   <strong>FeastFlow</strong> is a modern, responsive, full-featured gourmet food delivery web application built with React, Vite, and modern CSS design tokens. Experience fast ordering, smooth animations, dynamic menus, and live order tracking.
 </p>
 
